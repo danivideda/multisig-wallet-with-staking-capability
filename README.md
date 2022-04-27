@@ -13,9 +13,9 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
 
 ## How it works
 1. Create the script policy and the script address:
-   1. `multisig-payment.policy` → rules for doing regular transaction (payment key)
-   2. `multisig-stake.policy` → rules for withdrawing staking rewards (staking key)
-   3. Creating the script address would be combining `multisig-payment.policy` and `multisig-stake.policy` together and then produce `multisig-payment-and-stake.addr`
+   1. `multisig-payment-policy.script` → rules for doing regular transaction (payment key)
+   2. `multisig-stake-policy.script` → rules for withdrawing staking rewards (staking key)
+   3. Creating the script address would be combining `multisig-payment-policy.script` and `multisig-stake-policy.script` together and then produce `multisig-payment-and-stake.addr`
 2. This script will contain following information:
    1. List of wallet that are allowed to sign the transaction
    2. Minimum number of wallet required to validate transaction
@@ -23,14 +23,14 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
 3. Send ADA to this script address as treasury
 4. To use the fund from this script address:
    1. One person would create a `Tx.raw` file that will consume `UTxO` from this script address – this is a transaction file that haven’t been signed by anyone, therefore it cannot be submitted into the blockchain
-   2. The raw transaction would then be sent to each participants, and each of them will “sign” the `Tx.raw` file, and it will output a `Tx-person-1.witness` file
-   3. Collecting `*.witness` files from the participants, one person would **“combine and build”** the `*.witness` files, and sign the `Tx.raw` to become `Tx.signed`
+   2. The raw transaction would then be sent to each participants, and each of them will “sign” the `tx.raw` file, and it will output a `tx-person-1.witness` file
+   3. Collecting `*.witness` files from the participants, one person would **“combine and build”** the `*.witness` files, and sign the `tx.raw` to become `Tx.signed`
    4. Submit the signed transaction into the blockchain
 
-## Detailed Steps
+# Detailed Steps
 **DISCLAIMER**: You don’t have to download the Cardano full node. At the end, it only needs one person to submit the transaction. Other person would just use cardano-cli to sign the transaction locally.
 
-### Installing `cardano-cli`
+## Installing `cardano-cli`
 1. Open [https://github.com/input-output-hk/cardano-node#executables](https://github.com/input-output-hk/cardano-node#executables)
 2. Download the binary (executables) for your OS
 3. Extract `cardano-cli` into `~/.local/bin/` folder (For Linux and MacOS user)
@@ -39,7 +39,7 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
 6. Open terminal (or relaunch it, if you already opened it)
 7. Type `cardano-cli` and press enter.
 
-### Creating Wallets
+## Creating Wallets
 Every participants have to create their own private and public key pair, using `cardano-cli`. This is done locally and doesn’t require connection or `cardano-node` operations
 
 *Note* :
@@ -54,6 +54,7 @@ Create Wallets:
     cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey
    ```
     `.skey` → signing key. In other words, your private key (don’t share this with anyone)
+
     `.vkey` → verify key. Meaning, the public key
 
     *Why create `payment` keys and `stake` keys*? → In Shelley, every Cardano wallet address consist of 2 different element. The `payment` element for sending and receiving ADA, and the `stake` element to control and receive rewards from staking. Both `payment` and `stake` keys are required to build the wallet address later (e.g `addr1qy..xfqp5`). 
@@ -64,8 +65,41 @@ Create Wallets:
    ```
 3. **Remember that each participant have to follow this step** and later share their `payment.hash` and `stake.hash` to that one person who will create the script policy and script address
 
-### Creating the Script Policy and Script Address
-1. Create `multisig-payment.policy`
+For this demonstration, we will use 4 different wallet accounts. The participants would be represented by `addr1`, `addr2`, and `addr3`. The destination address will be `addr4`. All example files already provided in `address/` and `key/` folder.
+
+I suggest you to generate your own key-pair and then replace the existing files on `key/`, `policy/`, and `address/` folders. Please feel free to fork this repository and experiment it yourself!
+
+### Generating four new wallets
+```bash
+cardano-cli address key-gen --signing-key-file key/payment1.skey --verification-key-file key/payment1.vkey
+cardano-cli address key-gen --signing-key-file key/payment2.skey --verification-key-file key/payment2.vkey
+cardano-cli address key-gen --signing-key-file key/payment3.skey --verification-key-file key/payment3.vkey
+cardano-cli address key-gen --signing-key-file key/payment4.skey --verification-key-file key/payment4.vkey
+
+cardano-cli stake-address key-gen --signing-key-file key/stake1.skey --verification-key-file key/stake1.vkey
+cardano-cli stake-address key-gen --signing-key-file key/stake2.skey --verification-key-file key/stake2.vkey
+cardano-cli stake-address key-gen --signing-key-file key/stake3.skey --verification-key-file key/stake3.vkey
+cardano-cli stake-address key-gen --signing-key-file key/stake4.skey --verification-key-file key/stake4.vkey
+
+cardano-cli address build --payment-verification-key-file payment1.vkey --stake-verification-key-file stake1.vkey $TESTNET --out-file address/addr1.addr
+cardano-cli address build --payment-verification-key-file payment2.vkey --stake-verification-key-file stake2.vkey $TESTNET --out-file address/addr2.addr
+cardano-cli address build --payment-verification-key-file payment3.vkey --stake-verification-key-file stake3.vkey $TESTNET --out-file address/addr3.addr
+cardano-cli address build --payment-verification-key-file payment4.vkey --stake-verification-key-file stake4.vkey $TESTNET --out-file address/addr4.addr
+
+cardano-cli address key-hash --payment-verification-key-file key/payment1.vkey > key/payment1.hash
+cardano-cli address key-hash --payment-verification-key-file key/payment2.vkey > key/payment2.hash
+cardano-cli address key-hash --payment-verification-key-file key/payment3.vkey > key/payment3.hash
+cardano-cli address key-hash --payment-verification-key-file key/payment4.vkey > key/payment4.hash
+
+cardano-cli address key-hash --stake-verification-key-file key/stake1.vkey > key/stake1.hash
+cardano-cli address key-hash --stake-verification-key-file key/stake2.vkey > key/stake2.hash
+cardano-cli address key-hash --stake-verification-key-file key/stake3.vkey > key/stake3.hash
+cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key/stake4.hash
+```
+
+
+## Creating the Script Policy and Script Address
+1. Create `multisig-payment-policy.script` with following content
    ```JSON
    {
    "type": "atLeast",
@@ -86,7 +120,7 @@ Create Wallets:
       ]
    }
    ```
-2. Create `multisig-stake.policy`
+2. Create `multisig-stake-policy.script` with following content
    ```JSON
    {
    "type": "atLeast",
@@ -108,25 +142,73 @@ Create Wallets:
    }
    ```
 3. Further information for using different script conditions: [Link](https://github.com/input-output-hk/cardano-node/blob/master/doc/reference/simple-scripts.md)
-4. The `keyHash` on `multisig-payment.policy` is from `payment.hash` from each participants
-5. The `keyHash` on `multisig-stake.policy` is from `stake.hash` from each participants
-6. The `required` value is the minimum number of people needs to sign the transaction (as specified in `multisig-payment.policy`), or witdraw the staking rewards (as specified in `multisig-stake.policy`).
+4. The `keyHash` on `multisig-payment-policy.script` is `payment.hash` from each participants
+5. The `keyHash` on `multisig-stake-policy.script` is `stake.hash` from each participants
+6. The `required` value is the minimum number of people needs to sign a transaction (as specified in `multisig-payment-policy.script`), or to witdraw the staking rewards (as specified in `multisig-stake-policy.script`).
 7. Build the **Script Address**
-
-   \$TESTNET="--testnet-magic 1097911063" (for `bash` user)
-
-   \$TESTNET=(--testnet-magic 1097911063) (for `zsh` user)
+   ```bash
+   # env variables
+   TESTNET="--testnet-magic 1097911063" # (for `bash` user)
+   TESTNET=(--testnet-magic 1097911063) # (for `zsh` user)
+   ```
    ```bash
    cardano-cli address build \
-   --payment-script-file policy/multisig-payment.policy \
-   --stake-script-file policy/multisig-staking.policy \
+   --payment-script-file script/multisig-payment-policy.script \
+   --stake-script-file script/multisig-stake-policy.script \
    $TESTNET \
-   --out-file address/multisig-payment-and-staking.addr
+   --out-file address/multisig-payment-and-stake.addr
    ```
-   This will generate the script address into `multisig-payment-and-staking.addr`
+   This will generate a script address into `multisig-payment-and-staking.addr`
 8. Fund the script address with [Cardano Faucet Testnet](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
 9. Done! You just created a Multisig Wallet with staking capability!
-10. You can now send fund into this script address for Treasury management or any other use-case
+10. You can now send fund into this script address for Treasury management or any other use-cases
 
-### Sending fund
-TBD
+## Creating and Signing a Transaction
+### Build the transaction `tx.raw`
+***Note: the person who will build this must have cardano-node testnet or mainnet running in the background***
+1. Query the UTXO of the script address
+2. In terminal, save the TxHash#TxIndex as environment variable. Like so:
+   <img src="img/query-utxo.png" style="width:50%;">
+3. Build the transaction, using the utxo and `multisig-payment-policy.script` 
+   ```bash
+   cardano-cli transaction build \
+   --tx-in $utxo \
+   --tx-out $(cat address/addr4.addr)+5000000 \ # destination address + lovelaces
+   --change-address $(cat address/multisig-payment-and-stake.addr) \ # send back the remaining ADA
+   --tx-in-script-file script/multisig-payment-policy.script \ # payment-policy is used because it's about performing transaction
+   --witness-override 2 \ # number of people required to sign this transaction (will use .witness file later)
+   $TESTNET \
+   --out-file transaction/tx.raw
+   ```
+   In this example, we will send 5ADA to `addr4`, and it will generate a `tx.raw` file
+
+### Sign the transaction with witness
+1. Build witness with `payment1.skey` and the `tx.raw`
+2. We only need 2 witness, which will be from `addr1` and `addr2` wallet
+   ```bash
+   cardano-cli transaction witness \
+   --tx-body-file transaction/tx.raw \ # provide the raw transaction file
+   --signing-key-file key/payment1.skey \ # input signing key
+   --out-file transaction/addr1.witness \ # output for witness file
+   $TESTNET
+   ```
+3. Sign the transaction using 2 witness files
+   ```bash
+   cardano-cli transaction assemble \
+   --tx-body-file transaction/tx.raw \
+   --witness-file transaction/addr1.witness \
+   --witness-file transaction/addr2.witness \
+   --out-file transaction/tx.signed
+   ```
+   <img src="img/txsigned.png" style="width:50%;">
+4. Finally, submit it into the blockchain
+   ```bash
+   cardano-cli transaction submit --tx-file transaction/tx.signed $TESTNET
+   ```
+5. Check if `addr4` got the transaction
+   ```bash
+   cardano-cli query utxo --address $(cat address/addr4.addr) $TESTNET
+   ```
+   <img src="img/txsubmit.png" style="width:50%;">
+
+   You can see the UTXO for `5 ADA` at the top of the list
