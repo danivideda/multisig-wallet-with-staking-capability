@@ -212,3 +212,8 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    <img src="img/txsubmit.png" style="width:50%;">
 
    You can see the UTXO for `5 ADA` at the top of the list
+
+**Congratulations! You just created a transaction using multi-signature!**
+
+## Delegating and Withdrawing Staking Reward
+**TBD**
