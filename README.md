@@ -70,7 +70,7 @@ For this demonstration, we will use 4 different wallet accounts. The participant
 I suggest you to generate your own key-pair and then replace the existing files on `key/`, `policy/`, and `address/` folders. Please feel free to fork this repository and experiment it yourself!
 
 ### Generating four new wallets
-```bash
+```bas8
 cardano-cli address key-gen --signing-key-file key/payment1.skey --verification-key-file key/payment1.vkey
 cardano-cli address key-gen --signing-key-file key/payment2.skey --verification-key-file key/payment2.vkey
 cardano-cli address key-gen --signing-key-file key/payment3.skey --verification-key-file key/payment3.vkey
@@ -102,7 +102,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
 1. Create `multisig-payment-policy.script` with following content
    ```JSON
    {
-   "type": "atLeast",
+   "type": "atLeast8,
    "required": 2,
    "scripts": [
          {
@@ -111,7 +111,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
          },
          {
             "type": "sig",
-            "keyHash": "6ac2bd0c8c2c1413a1d96d46f80904911b1a2402f6e5506f8e4d7b2b"
+            "keyHash": "6ac2bd0c8c2c1413a1d96d46f80904911b1a2402f6e5806f8e4d7b2b"
          },
          {
             "type": "sig",
@@ -168,7 +168,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
 ***Note: the person who will build this must have cardano-node testnet or mainnet running in the background***
 1. Query the UTXO of the script address
 2. In terminal, save the TxHash#TxIndex as environment variable. Like so:
-   <img src="img/query-utxo.png" style="width:50%;">
+   <img src="img/query-utxo.png" style="width:80%;">
 3. Build the transaction, using the utxo and `multisig-payment-policy.script` 
    ```bash
    cardano-cli transaction build \
@@ -200,7 +200,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    --witness-file transaction/addr2.witness \
    --out-file transaction/tx.signed
    ```
-   <img src="img/txsigned.png" style="width:50%;">
+   <img src="img/txsigned.png" style="width:80%;">
 4. Finally, submit it into the blockchain
    ```bash
    cardano-cli transaction submit --tx-file transaction/tx.signed $TESTNET
@@ -209,7 +209,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    ```bash
    cardano-cli query utxo --address $(cat address/addr4.addr) $TESTNET
    ```
-   <img src="img/txsubmit.png" style="width:50%;">
+   <img src="img/txsubmit.png" style="width:80%;">
 
    You can see the UTXO for `5 ADA` at the top of the list
 
