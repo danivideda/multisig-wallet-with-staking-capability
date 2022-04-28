@@ -102,7 +102,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
 1. Create `multisig-payment-policy.script` with following content
    ```JSON
    {
-   "type": "atLeast8,
+   "type": "atLeast",
    "required": 2,
    "scripts": [
          {
