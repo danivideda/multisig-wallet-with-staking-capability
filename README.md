@@ -20,7 +20,7 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
    1. List of wallet that are allowed to sign the transaction
    2. Minimum number of wallet required to validate transaction
    3. i.e: from 5 wallets listed, it will only requires 3 wallet to sign a transaction
-3. Send ADA to this script address as treasury
+3. Send ADA to this script address, acting as *Treasury* wallet fund
 4. To use the fund from this script address:
    1. One person would create a `Tx.raw` file that will consume `UTxO` from this script address – this is a transaction file that haven’t been signed by anyone, therefore it cannot be submitted into the blockchain
    2. The raw transaction would then be sent to each participants, and each of them will “sign” the `tx.raw` file, and it will output a `tx-person-1.witness` file
@@ -50,8 +50,8 @@ Every participants have to create their own private and public key pair, using `
 Create Wallets:
 1. Create a key-pair for payment and staking key
    ```bash
-    cardano-cli address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey
-    cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey
+    $ cardano-cli address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey
+    $ cardano-cli stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey
    ```
     `.skey` → signing key. In other words, your private key (don’t share this with anyone)
 
@@ -60,8 +60,8 @@ Create Wallets:
     *Why create `payment` keys and `stake` keys*? → In Shelley, every Cardano wallet address consist of 2 different element. The `payment` element for sending and receiving ADA, and the `stake` element to control and receive rewards from staking. Both `payment` and `stake` keys are required to build the wallet address later (e.g `addr1qy..xfqp5`). 
 2. Save the `payment.vkey` hash
    ```bash
-    cardano-cli address key-hash --payment-verification-key-file payment.vkey > payment.hash
-    cardano-cli address key-hash --stake-verification-key-file stake.vkey > stake.hash
+    $ cardano-cli address key-hash --payment-verification-key-file payment.vkey > payment.hash
+    $ cardano-cli address key-hash --stake-verification-key-file stake.vkey > stake.hash
    ```
 3. **Remember that each participant have to follow this step** and later share their `payment.hash` and `stake.hash` to that one person who will create the script policy and script address
 
@@ -71,30 +71,30 @@ I suggest you to generate your own key-pair and then replace the existing files 
 
 ### Generating four new wallets
 ```bas8
-cardano-cli address key-gen --signing-key-file key/payment1.skey --verification-key-file key/payment1.vkey
-cardano-cli address key-gen --signing-key-file key/payment2.skey --verification-key-file key/payment2.vkey
-cardano-cli address key-gen --signing-key-file key/payment3.skey --verification-key-file key/payment3.vkey
-cardano-cli address key-gen --signing-key-file key/payment4.skey --verification-key-file key/payment4.vkey
+$ cardano-cli address key-gen --signing-key-file key/payment1.skey --verification-key-file key/payment1.vkey
+$ cardano-cli address key-gen --signing-key-file key/payment2.skey --verification-key-file key/payment2.vkey
+$ cardano-cli address key-gen --signing-key-file key/payment3.skey --verification-key-file key/payment3.vkey
+$ cardano-cli address key-gen --signing-key-file key/payment4.skey --verification-key-file key/payment4.vkey
 
-cardano-cli stake-address key-gen --signing-key-file key/stake1.skey --verification-key-file key/stake1.vkey
-cardano-cli stake-address key-gen --signing-key-file key/stake2.skey --verification-key-file key/stake2.vkey
-cardano-cli stake-address key-gen --signing-key-file key/stake3.skey --verification-key-file key/stake3.vkey
-cardano-cli stake-address key-gen --signing-key-file key/stake4.skey --verification-key-file key/stake4.vkey
+$ cardano-cli stake-address key-gen --signing-key-file key/stake1.skey --verification-key-file key/stake1.vkey
+$ cardano-cli stake-address key-gen --signing-key-file key/stake2.skey --verification-key-file key/stake2.vkey
+$ cardano-cli stake-address key-gen --signing-key-file key/stake3.skey --verification-key-file key/stake3.vkey
+$ cardano-cli stake-address key-gen --signing-key-file key/stake4.skey --verification-key-file key/stake4.vkey
 
-cardano-cli address build --payment-verification-key-file payment1.vkey --stake-verification-key-file stake1.vkey $TESTNET --out-file address/addr1.addr
-cardano-cli address build --payment-verification-key-file payment2.vkey --stake-verification-key-file stake2.vkey $TESTNET --out-file address/addr2.addr
-cardano-cli address build --payment-verification-key-file payment3.vkey --stake-verification-key-file stake3.vkey $TESTNET --out-file address/addr3.addr
-cardano-cli address build --payment-verification-key-file payment4.vkey --stake-verification-key-file stake4.vkey $TESTNET --out-file address/addr4.addr
+$ cardano-cli address build --payment-verification-key-file payment1.vkey --stake-verification-key-file stake1.vkey $TESTNET --out-file address/addr1.addr
+$ cardano-cli address build --payment-verification-key-file payment2.vkey --stake-verification-key-file stake2.vkey $TESTNET --out-file address/addr2.addr
+$ cardano-cli address build --payment-verification-key-file payment3.vkey --stake-verification-key-file stake3.vkey $TESTNET --out-file address/addr3.addr
+$ cardano-cli address build --payment-verification-key-file payment4.vkey --stake-verification-key-file stake4.vkey $TESTNET --out-file address/addr4.addr
 
-cardano-cli address key-hash --payment-verification-key-file key/payment1.vkey > key/payment1.hash
-cardano-cli address key-hash --payment-verification-key-file key/payment2.vkey > key/payment2.hash
-cardano-cli address key-hash --payment-verification-key-file key/payment3.vkey > key/payment3.hash
-cardano-cli address key-hash --payment-verification-key-file key/payment4.vkey > key/payment4.hash
+$ cardano-cli address key-hash --payment-verification-key-file key/payment1.vkey > key/payment1.hash
+$ cardano-cli address key-hash --payment-verification-key-file key/payment2.vkey > key/payment2.hash
+$ cardano-cli address key-hash --payment-verification-key-file key/payment3.vkey > key/payment3.hash
+$ cardano-cli address key-hash --payment-verification-key-file key/payment4.vkey > key/payment4.hash
 
-cardano-cli address key-hash --stake-verification-key-file key/stake1.vkey > key/stake1.hash
-cardano-cli address key-hash --stake-verification-key-file key/stake2.vkey > key/stake2.hash
-cardano-cli address key-hash --stake-verification-key-file key/stake3.vkey > key/stake3.hash
-cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key/stake4.hash
+$ cardano-cli address key-hash --stake-verification-key-file key/stake1.vkey > key/stake1.hash
+$ cardano-cli address key-hash --stake-verification-key-file key/stake2.vkey > key/stake2.hash
+$ cardano-cli address key-hash --stake-verification-key-file key/stake3.vkey > key/stake3.hash
+$ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key/stake4.hash
 ```
 
 
@@ -152,7 +152,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    TESTNET=(--testnet-magic 1097911063) # (for `zsh` user)
    ```
    ```bash
-   cardano-cli address build \
+   $ cardano-cli address build \
    --payment-script-file script/multisig-payment-policy.script \
    --stake-script-file script/multisig-stake-policy.script \
    $TESTNET \
@@ -171,7 +171,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    <img src="img/query-utxo.png" style="width:80%;">
 3. Build the transaction, using the utxo and `multisig-payment-policy.script` 
    ```bash
-   cardano-cli transaction build \
+   $ cardano-cli transaction build \
    --tx-in $utxo \
    --tx-out $(cat address/addr4.addr)+5000000 \ # destination address + lovelaces
    --change-address $(cat address/multisig-payment-and-stake.addr) \ # send back the remaining ADA
@@ -183,10 +183,10 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    In this example, we will send 5ADA to `addr4`, and it will generate a `tx.raw` file
 
 ### Sign the transaction with witness
-1. Build witness with `payment1.skey` and the `tx.raw`
+1. Build witness with `payment1.skey` and the `tx.raw` that we've already generated
 2. We only need 2 witness, which will be from `addr1` and `addr2` wallet
    ```bash
-   cardano-cli transaction witness \
+   $ cardano-cli transaction witness \
    --tx-body-file transaction/tx.raw \ # provide the raw transaction file
    --signing-key-file key/payment1.skey \ # input signing key
    --out-file transaction/addr1.witness \ # output for witness file
@@ -194,7 +194,7 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    ```
 3. Sign the transaction using 2 witness files
    ```bash
-   cardano-cli transaction assemble \
+   $ cardano-cli transaction assemble \
    --tx-body-file transaction/tx.raw \
    --witness-file transaction/addr1.witness \
    --witness-file transaction/addr2.witness \
@@ -203,11 +203,11 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
    <img src="img/txsigned.png" style="width:80%;">
 4. Finally, submit it into the blockchain
    ```bash
-   cardano-cli transaction submit --tx-file transaction/tx.signed $TESTNET
+   $ cardano-cli transaction submit --tx-file transaction/tx.signed $TESTNET
    ```
 5. Check if `addr4` got the transaction
    ```bash
-   cardano-cli query utxo --address $(cat address/addr4.addr) $TESTNET
+   $ cardano-cli query utxo --address $(cat address/addr4.addr) $TESTNET
    ```
    <img src="img/txsubmit.png" style="width:80%;">
 
@@ -215,5 +215,104 @@ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > key
 
 **Congratulations! You just created a transaction using multi-signature!**
 
-## Delegating and Withdrawing Staking Reward
-**TBD**
+# Staking, Delegating, and Withdrawing Rewards for this Script Address / Multisig Wallet
+## Staking the Multisig Wallet
+For staking with this script address, we will do the same thing like when we're doing transaction. However, we need to also include additional information such as the `*.witness` from `stake.skey` instead of only the `payment.skey` like before.
+
+<ins>Couple of things to note in addition to performing a transaction in previous section</ins> :
+
+   1. Additional step includes:
+      1. Creating registration certificate for staking
+      2. Creating delegation certificate for a stake pool
+   2. Performing the transaction to submit these certificate will use both `payment.skey` and `stake.skey` to sign the raw `tx.raw` file
+   3. Must include both `multisig-payment-policy.script` and `multisig-stake-policy.script` when building transaction
+   4. Signing the transaction will use 4 `*.witness` files :
+      1. `payment1.skey` → `addr1-registration-payment.witness`
+      2. `stake1.skey` → `addr1-registration-stake.witness`
+      3. `payment2.skey` → `addr2-registration-payment.witness`
+      4. `stake2.skey` → `addr2-registration-stake.witness`
+
+### Creating Certificates for Registration and Delegation
+1. Generate the registration certificate using
+   ```bash
+   $ cardano-cli stake-address registration-certificate \
+   --stake-script-file script/multisig-stake-policy.script \
+   --out-file staking/script-staking-registration.cert
+   ```
+   Note that this will consume `2 ADA` for deposit when registering the script address. It will be returned if you de-register in the future
+   <img src="img/staking_regist_cert.png" style="width:80%;">
+2. Generate the delegation certificate
+   ```bash
+   $ cardano-cli stake-address delegation-certificate \
+   --stake-script-file script/multisig-stake-policy.script \
+   --stake-pool-id pool10vchpw7e525qdtygdhxuak4ujwrfa0ygjxhqqm03rz0z7586fq4 \
+   --out-file staking/script-staking-delegation.cert
+   ```
+   The `--stake-pool-id` is a BECH32 encoded Pool ID. You can find it [here](https://testnet.cardanoscan.io/pool/7b3170bbd9a2a806ac886dcdcedabc93869ebc8891ae006df1189e2f) where they provide information for `BECH32 Pool Id`
+   <img src="img/staking_delegate_cert.png" style="width:80%;">
+
+### Creating transaction to Submit Staking Certificates
+1. Build the `tx-staking-registration-and-delegation.raw`
+   ```bash
+   $ cardano-cli transaction build \
+   --tx-in $utxo1 \
+   --change-address $(cat address/multisig-payment-and-stake.addr) \
+   --tx-in-script-file script/multisig-payment-policy.script \
+   --certificate-file staking/script-staking-registration.cert \
+   --certificate-file staking/script-staking-delegation.cert \
+   --certificate-script-file script/multisig-stake-policy.script \
+   --witness-override 4 \
+   $TESTNET \
+   --out-file transaction/tx-staking-registration-and-delegation.raw
+   ```
+   - Query and find your UTXO that's sitting in this Script Address, and use it for payment for this transaction `utxo1=70e40a3ccd7fb47c50fbd5c83a70da411604516cbb7aac57783c604602fabf0d#0`
+   - Remember that we will use 4 witness files, hence `--witness-override 4`
+   - We include both registration and delegation certificate in a single transaction. In the future, if you wish to change delegation pool, you can just submit the delegation certificate
+2. Create the witness files using `payment.skey` and `stake.skey`
+   ```bash
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-registration-and-delegation.raw \
+   --signing-key-file key/payment1.skey \
+   $TESTNET \
+   --out-file transaction/addr1-registration-payment.witness
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-registration-and-delegation.raw \
+   --signing-key-file key/stake1.skey \
+   $TESTNET \
+   --out-file transaction/addr1-registration-stake.witness
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-registration-and-delegation.raw \
+   --signing-key-file key/payment2.skey \
+   $TESTNET \
+   --out-file transaction/addr2-registration-payment.witness
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-registration-and-delegation.raw \
+   --signing-key-file key/stake2.skey \
+   $TESTNET \
+   --out-file transaction/addr2-registration-stake.witness
+   ```
+   <img src="img/staking_witness_regist.png" style="width:80%;">
+
+   The reason why we need witness with both the `payment.skey` and `stake.skey` is because we're performing certificate delegation + registration, and payment for the fees.
+3. Sign the Transaction
+   ```bash
+   $ cardano-cli transaction assemble \
+   --tx-body-file transaction/tx-staking-registration-and-delegation.raw \
+   --witness-file transaction/addr1-registration-payment.witness \
+   --witness-file transaction/addr1-registration-stake.witness \
+   --witness-file transaction/addr2-registration-payment.witness \
+   --witness-file transaction/addr2-registration-stake.witness \
+   --out-file transaction/tx-staking-registration-and-delegation.signed
+   ```
+4. Submit the transaction into the blockchain
+   ```bash
+   $ cardano-cli transaction submit --tx-file transaction/tx-staking-registration-and-delegation.signed $TESTNET
+   ```
+5. Done! You just successfully **Stake** your Multisig Wallet
+   <img src="img/staking_txsigned.png" style="width:80%;">
+
+## Withdrawing Rewards
+1. *TBD*
