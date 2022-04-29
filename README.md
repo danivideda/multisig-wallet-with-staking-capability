@@ -249,6 +249,7 @@ For staking with this script address, we will do the same thing like when we're 
    --out-file staking/script-staking-delegation.cert
    ```
    The `--stake-pool-id` is a BECH32 encoded Pool ID. You can find it [here](https://testnet.cardanoscan.io/pool/7b3170bbd9a2a806ac886dcdcedabc93869ebc8891ae006df1189e2f) where they provide information for `BECH32 Pool Id`
+
    <img src="img/staking_delegate_cert.png" style="width:80%;">
 
 ### Creating transaction to Submit Staking Certificates
