@@ -1,0 +1,8 @@
+ShelleyTxValidationError ShelleyBasedEraAlonzo (
+    ApplyTxError [
+        UtxowFailure (
+            WrappedShelleyEraFailure (
+                ScriptWitnessNotValidatingUTXOW (
+                    fromList [ScriptHash "aa08ec295c5b61b1e76587da5401865fc93ca67447aa87ae694806f3"]))),
+                    UtxowFailure (WrappedShelleyEraFailure (MissingScriptWitnessesUTXOW (fromList [ScriptHash "b05b1b68a96fcbd8b2798003d6842303a44869227b091ecd9b4cd1b4"]))),
+                    UtxowFailure (WrappedShelleyEraFailure (UtxoFailure (UtxosFailure (CollectErrors [NoRedeemer (Spending (TxInCompact (TxId {_unTxId = SafeHash "70e40a3ccd7fb47c50fbd5c83a70da411604516cbb7aac57783c604602fabf0d"}) 0)),NoWitness (ScriptHash "b05b1b68a96fcbd8b2798003d6842303a44869227b091ecd9b4cd1b4")]))))])

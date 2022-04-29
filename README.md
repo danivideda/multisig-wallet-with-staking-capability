@@ -55,7 +55,7 @@ Create Wallets:
    ```
     `.skey` → signing key. In other words, your private key (don’t share this with anyone)
 
-    `.vkey` → verify key. Meaning, the public key
+    `.vkey` → verification key. Meaning, the public key
 
     *Why create `payment` keys and `stake` keys*? → In Shelley, every Cardano wallet address consist of 2 different element. The `payment` element for sending and receiving ADA, and the `stake` element to control and receive rewards from staking. Both `payment` and `stake` keys are required to build the wallet address later (e.g `addr1qy..xfqp5`). 
 2. Save the `payment.vkey` hash

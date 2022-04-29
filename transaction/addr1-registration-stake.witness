@@ -1,0 +1,5 @@
+{
+    "type": "TxWitness AlonzoEra",
+    "description": "",
+    "cborHex": "82008258208771cdd632b1a2641306b098458709981d23b20f3580b4b8ecec470d3f0e060258400d99322dff9bdf18f3a2d0adaf69e72636d90c2f332b4eda03f4ff7507eebb423d2b5220f5fc0eeec5bcf00d5a69afaeaec2af1551993c66a7e8ee347a085602"
+}
