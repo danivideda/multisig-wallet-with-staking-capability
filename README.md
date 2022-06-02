@@ -4,9 +4,9 @@ When using this wallet, transactions must be approved by a group of people that 
 The ***use-case*** for such a wallet is for an organization or a team who wants to create a *'Treasury'* that will hold their ADA.
 
 ## General overview
-1. Instead of using one personal Wallet Address, we will use ‘Script Address’ to hold the funds
-2. A script address is just like any other Cardano wallet address, where you can hold ADA, and send ADA from / to the address. The difference is, this wallet is not owned by a single ‘private key’.
-3. This script address will have a pre-defined rules to only spend its UTXO if a certain conditions are met. This will defined in a script policy (a JSON structured file)
+1. Instead of using one personal Wallet Address, we will use a ‘Script Address’ to hold the funds
+2. A script address is just like any other Cardano wallet address, where you can hold ADA, and send ADA from / to the address. The difference is, this wallet is not owned by a single ‘private key’
+3. This script address will have a pre-defined rules, that is to **"only spend its UTXO if a certain conditions are met"**. This will be defined in a script policy (a JSON structured file)
 4. For this example, we will set a condition that **the script can only send ADA if a certain number of people specified in the script approve the transaction**
 5. We will also create a script address that could also be staked, and withdraw the rewards together
 
@@ -44,7 +44,7 @@ Every participants have to create their own private and public key pair, using `
 
 *Note* :
 1. Each participant have to create this new wallet using `cardano-cli`
-2. It is recommended to separate this wallet from your main wallet, because the process of signing transaction don’t require fees (because the fee will be paid using the fund from script address)
+2. It is recommended to separate this wallet from your "day-to-day use wallet", because the process of signing transaction don’t require fees (because the fee will be paid using the fund from script address)
 3. Keep your **private-key** safe, don’t lose it.
 
 Create Wallets:
@@ -63,11 +63,13 @@ Create Wallets:
     $ cardano-cli address key-hash --payment-verification-key-file payment.vkey > payment.hash
     $ cardano-cli address key-hash --stake-verification-key-file stake.vkey > stake.hash
    ```
-3. **Remember that each participant have to follow this step** and later share their `payment.hash` and `stake.hash` to that one person who will create the script policy and script address
+3. **Remember that each participant have to follow the above steps** and later share their `payment.hash` and `stake.hash` to that one person who will create the script policy and script address
 
-For this demonstration, we will use 4 different wallet accounts. The participants would be represented by `addr1`, `addr2`, and `addr3`. The destination address will be `addr4`. All example files already provided in `address/` and `key/` folder.
+**From here on out, we will use 4 different wallet accounts for demonstrations.**
 
-I suggest you to generate your own key-pair and then replace the existing files on `key/`, `policy/`, and `address/` folders. Please feel free to fork this repository and experiment it yourself!
+The participants would be represented by `addr1`, `addr2`, and `addr3`. The destination address will be `addr4`. All example files already provided in `address/` and `key/` folder.
+
+*I suggest you to generate your own key-pair and then replace the existing files on `key/`, `policy/`, and `address/` folders. Please feel free to fork this repository and experiment it yourself!*
 
 ### Generating four new wallets
 ```bas8
@@ -233,13 +235,14 @@ For staking with this script address, we will do the same thing like when we're 
       4. `stake2.skey` → `addr2-registration-stake.witness`
 
 ### Creating Certificates for Registration and Delegation
-1. Generate the registration certificate using
+1. Generate the registration certificate
    ```bash
    $ cardano-cli stake-address registration-certificate \
    --stake-script-file script/multisig-stake-policy.script \
    --out-file staking/script-staking-registration.cert
    ```
    Note that this will consume `2 ADA` for deposit when registering the script address. It will be returned if you de-register in the future
+
    <img src="img/staking_regist_cert.png" style="width:80%;">
 2. Generate the delegation certificate
    ```bash
