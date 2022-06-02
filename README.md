@@ -27,6 +27,8 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
    3. Collecting `*.witness` files from the participants, one person would **“combine and build”** the `*.witness` files, and sign the `tx.raw` to become `Tx.signed`
    4. Submit the signed transaction into the blockchain
 
+**If you have any question, feel free to create new issue for this repo**
+
 # Detailed Steps
 **DISCLAIMER**: You don’t have to download the Cardano full node. At the end, it only needs one person to submit the transaction. Other person would just use cardano-cli to sign the transaction locally.
 
@@ -184,7 +186,7 @@ $ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > k
    ```
    In this example, we will send 5ADA to `addr4`, and it will generate a `tx.raw` file
 
-### Sign the transaction with witness
+### Sign and submit the transaction with witness
 1. Build witness with `payment1.skey` and the `tx.raw` that we've already generated
 2. We only need 2 witness, which will be from `addr1` and `addr2` wallet
    ```bash
@@ -192,6 +194,12 @@ $ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > k
    --tx-body-file transaction/tx.raw \ # provide the raw transaction file
    --signing-key-file key/payment1.skey \ # input signing key
    --out-file transaction/addr1.witness \ # output for witness file
+   $TESTNET
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx.raw \
+   --signing-key-file key/payment2.skey \
+   --out-file transaction/addr2.witness \
    $TESTNET
    ```
 3. Sign the transaction using 2 witness files
@@ -300,7 +308,7 @@ For staking with this script address, we will do the same thing like when we're 
    ```
    <img src="img/staking_witness_regist.png" style="width:80%;">
 
-   The reason why we need witness with both the `payment.skey` and `stake.skey` is because we're performing certificate delegation + registration, and payment for the fees.
+   The reason why we need witness with both the `payment.skey` and `stake.skey` is because we're performing certificate delegation+registration, and payment for the fees.
 3. Sign the Transaction
    ```bash
    $ cardano-cli transaction assemble \
@@ -315,8 +323,100 @@ For staking with this script address, we will do the same thing like when we're 
    ```bash
    $ cardano-cli transaction submit --tx-file transaction/tx-staking-registration-and-delegation.signed $TESTNET
    ```
-5. Done! You just successfully **Stake** your Multisig Wallet
+5. Done! You just successfully **Stake** your Multisig Wallet!
    <img src="img/staking_txsigned.png" style="width:80%;">
 
 ## Withdrawing Rewards
-1. *TBD*
+Withdrawing will need `*.witness` files from both `payment.skey` and `stake.skey`
+
+### Checking rewards balance
+1. Generate the staking address
+   ```bash
+   $ cardano-cli stake-address build \
+   --stake-script-file script/multisig-stake-policy.script \
+   $TESTNET \
+   --out-file address/multisig-stake.addr
+   ```
+2. Check the rewards balance
+   ```bash
+   $ cardano-cli query stake-address-info \
+   --address $(cat address/multisig-stake.addr) \
+   $TESTNET
+   ```
+
+   <img src="img/staking-address.png" style="width:80%;">
+
+### Creating transaction to withdraw rewards
+1. Build the `tx-withdraw.raw`
+   ```bash
+   # get UTxO from Script Address first, and set utxo1
+   utxo1=9e5ca401e7b3765fa59451d21a93e3145e1190653dfd0c1e11f3bd1e52cf058b#0
+   ```
+   ```bash
+   $ cardano-cli transaction build \
+   --tx-in $utxo1 \
+   --change-address $(cat address/multisig-payment-and-stake.addr) \
+   --tx-in-script-file script/multisig-payment-policy.script \
+   --withdrawal $(cat address/multisig-stake.addr)+804657 \
+   --withdrawal-script-file script/multisig-stake-policy.script \
+   --witness-override 4 \
+   $TESTNET \
+   --out-file transaction/tx-staking-withdraw.raw
+   ```
+
+   <img src="img/staking-withdraw-tx-raw.png" style="width:80%;">
+
+2. Create the witness files using `payment.skey` and `stake.skey`
+   ```bash
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-withdraw.raw \
+   --signing-key-file key/payment1.skey \
+   $TESTNET \
+   --out-file transaction/addr1-withdrawal-payment.witness
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-withdraw.raw \
+   --signing-key-file key/stake1.skey \
+   $TESTNET \
+   --out-file transaction/addr1-withdrawal-stake.witness
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-withdraw.raw \
+   --signing-key-file key/payment2.skey \
+   $TESTNET \
+   --out-file transaction/addr2-withdrawal-payment.witness
+
+   $ cardano-cli transaction witness \
+   --tx-body-file transaction/tx-staking-withdraw.raw \
+   --signing-key-file key/stake2.skey \
+   $TESTNET \
+   --out-file transaction/addr2-withdrawal-stake.witness
+   ```
+
+   <img src="img/staking-withdrawal-witness.png" style="width:80%;">
+3. Sign the transaction
+   ```bash
+   $ cardano-cli transaction assemble \
+   --tx-body-file transaction/tx-staking-registration-and-delegation.raw \
+   --witness-file transaction/addr1-registration-payment.witness \
+   --witness-file transaction/addr1-registration-stake.witness \
+   --witness-file transaction/addr2-registration-payment.witness \
+   --witness-file transaction/addr2-registration-stake.witness \
+   --out-file transaction/tx-staking-registration-and-delegation.signed
+   ```
+4. Submit the transaction into the blockchain
+   ```bash
+   $ cardano-cli transaction submit --tx-file transaction/tx-staking-registration-and-delegation.signed $TESTNET
+   ```
+5. Done! You just successfully **Withdraw** your Multisig Wallet rewards!
+   ```bash
+   $ cardano-cli query stake-address-info \
+   --address $(cat address/multisig-stake.addr) \
+   $TESTNET
+   ```
+
+   <img src="img/staking-withdrawal-submitted.png" style="width:80%;">
+
+   You can see the newly added UTxO with the new increased amount. (Note that the TxHash is different from before, because the previous UTxO has been consumed)
+
+   <img src="img/staking-withdrawal-compare-before.png" style="width:80%;">
