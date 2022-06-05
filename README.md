@@ -50,12 +50,9 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
 
 # Detailed Steps
 [Back to Top](#)
-
 **DISCLAIMER**: You don’t have to download the Cardano full node. At the end, it only needs one person to submit the transaction. Other person would just use cardano-cli to sign the transaction locally.
 
 ## Installing `cardano-cli`
-[Back to parent](#detailed-steps)
-
 1. Open [https://github.com/input-output-hk/cardano-node#executables](https://github.com/input-output-hk/cardano-node#executables)
 2. Download the binary (executables) for your OS
 3. Extract `cardano-cli` into `~/.local/bin/` folder (For Linux and MacOS user)
@@ -65,8 +62,6 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
 7. Type `cardano-cli` and press enter.
 
 ## Creating Wallets
-[Back to parent](#detailed-steps)
-
 Every participants have to create their own private and public key pair, using `cardano-cli`. This is done locally and doesn’t require connection or `cardano-node` operations
 
 *Note* :
@@ -128,8 +123,6 @@ $ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > k
 
 
 ## Creating the Script Policy and Script Address
-[Back to parent](#detailed-steps)
-
 1. Create `multisig-payment-policy.script` with following content
    ```JSON
    {
@@ -195,8 +188,6 @@ $ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > k
 10. You can now send fund into this script address for Treasury management or any other use-cases
 
 ## Creating and Signing a Transaction
-[Back to parent](#detailed-steps)
-
 ### Build the transaction `tx.raw`
 ***Note: the person who will build this must have cardano-node testnet or mainnet running in the background***
 1. Query the UTXO of the script address
@@ -256,10 +247,7 @@ $ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > k
 
 # Staking, Delegating, and Withdrawing Rewards for this Script Address / Multisig Wallet
 [Back to Top](#)
-
 ## Staking the Multisig Wallet
-[Back to parent](#staking-delegating-and-withdrawing-rewards-for-this-script-address--multisig-wallet)
-
 For staking with this script address, we will do the same thing like when we're doing transaction. However, we need to also include additional information such as the `*.witness` from `stake.skey` instead of only the `payment.skey` like before.
 
 <ins>Couple of things to note in addition to performing a transaction in previous section</ins> :
@@ -360,8 +348,6 @@ For staking with this script address, we will do the same thing like when we're 
    <img src="img/staking_txsigned.png" style="width:80%;">
 
 ## Withdrawing Rewards
-[Back to parent](#staking-delegating-and-withdrawing-rewards-for-this-script-address--multisig-wallet)
-
 Withdrawing will need `*.witness` files from both `payment.skey` and `stake.skey`
 
 ### Checking rewards balance
