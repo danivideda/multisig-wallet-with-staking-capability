@@ -49,7 +49,8 @@ The ***use-case*** for such a wallet is for an organization or a team who wants 
 **If you have any question, feel free to create new issue for this repo**
 
 # Detailed Steps
-[Back to Top](#)
+[Back to Top](#multi-signature-wallet-for-cardano-with-staking-capability)
+
 **DISCLAIMER**: You don’t have to download the Cardano full node. At the end, it only needs one person to submit the transaction. Other person would just use cardano-cli to sign the transaction locally.
 
 ## Installing `cardano-cli`
@@ -246,7 +247,8 @@ $ cardano-cli address key-hash --stake-verification-key-file key/stake4.vkey > k
 **Congratulations! You just created a transaction using multi-signature!**
 
 # Staking, Delegating, and Withdrawing Rewards for this Script Address / Multisig Wallet
-[Back to Top](#)
+[Back to Top](#multi-signature-wallet-for-cardano-with-staking-capability)
+
 ## Staking the Multisig Wallet
 For staking with this script address, we will do the same thing like when we're doing transaction. However, we need to also include additional information such as the `*.witness` from `stake.skey` instead of only the `payment.skey` like before.
 
