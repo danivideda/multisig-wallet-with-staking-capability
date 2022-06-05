@@ -3,6 +3,25 @@ Multi Signature wallet (or multisig wallet) means a wallet that is not owned by 
 When using this wallet, transactions must be approved by a group of people that are responsible for this wallet.
 The ***use-case*** for such a wallet is for an organization or a team who wants to create a *'Treasury'* that will hold their ADA.
 
+- [Multi Signature Wallet for Cardano with Staking Capability](#multi-signature-wallet-for-cardano-with-staking-capability)
+  - [General overview](#general-overview)
+  - [How it works](#how-it-works)
+- [Detailed Steps](#detailed-steps)
+  - [Installing `cardano-cli`](#installing-cardano-cli)
+  - [Creating Wallets](#creating-wallets)
+    - [Generating four new wallets](#generating-four-new-wallets)
+  - [Creating the Script Policy and Script Address](#creating-the-script-policy-and-script-address)
+  - [Creating and Signing a Transaction](#creating-and-signing-a-transaction)
+    - [Build the transaction `tx.raw`](#build-the-transaction-txraw)
+    - [Sign and submit the transaction with witness](#sign-and-submit-the-transaction-with-witness)
+- [Staking, Delegating, and Withdrawing Rewards for this Script Address / Multisig Wallet](#staking-delegating-and-withdrawing-rewards-for-this-script-address--multisig-wallet)
+  - [Staking the Multisig Wallet](#staking-the-multisig-wallet)
+    - [Creating Certificates for Registration and Delegation](#creating-certificates-for-registration-and-delegation)
+    - [Creating transaction to Submit Staking Certificates](#creating-transaction-to-submit-staking-certificates)
+  - [Withdrawing Rewards](#withdrawing-rewards)
+    - [Checking rewards balance](#checking-rewards-balance)
+    - [Creating transaction to withdraw rewards](#creating-transaction-to-withdraw-rewards)
+
 ## General overview
 1. Instead of using one personal Wallet Address, we will use a ‘Script Address’ to hold the funds
 2. A script address is just like any other Cardano wallet address, where you can hold ADA, and send ADA from / to the address. The difference is, this wallet is not owned by a single ‘private key’
